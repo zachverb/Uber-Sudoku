@@ -5,23 +5,25 @@ export default class Board {
   constructor() {
     this.boardArray = sudokuArray;
     $('#sudoku-container')
-      .append(this.generateBoard(sudokuArray));
+      .append(this.generateBoard(this.boardArray));
   }
 
   generateBoard(sudokuArray) {
     let board = $('<table></table>');
     sudokuArray.forEach((row, y) => {
-      let rowElement = $('<tr></tr>');
+      let rowElement = $('<tr class="row"></tr>');
       board.append(rowElement);
       row.forEach((value, x) => {
-        let tile = this.createTile(value, x, y);
+        let tile = this.createTile(value, y, x);
         rowElement.append(tile);
       })
     })
     return board;
   }
 
-  createTile(value, x, y) {
-      return $(`<td class='tile' id='${x}-${y}'>${value}</td>`);
+  createTile(value, y, x) {
+    let tile = $(`<td class="tile" id='${y}-${x}'></td>`);
+    tile.append(`<input placeholder="${value}" maxlength="1" readonly="readonly">`);
+    return tile;
   }
 }
