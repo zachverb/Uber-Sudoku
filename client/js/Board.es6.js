@@ -16,7 +16,7 @@ export default class Board {
       let rowElement = $('<tr class="row"></tr>');
       board.append(rowElement);
       row.forEach((value, columnIndex) => {
-        let tile = this.createTile(value, y, x, sudokuArray);
+        let tile = this.createTile(value, rowIndex, columnIndex);
         rowElement.append(tile);
       });
     });
@@ -33,13 +33,19 @@ export default class Board {
     if (value) {
       input.attr('readonly', 'readonly');
     } else {
+      input.keyup(function() {
+        if(!$(this).val()) {
+          self.sudoku.removeMove(row, column);
+        }
+      });
       input.on('input', function() {
         let val = parseInt($(this).val());
-        if(!self.sudoku.addMove(val, row, column)) {
+        if(val !== '' && !self.sudoku.addMove(val, row, column)) {
           $(this).val('');
         }
         if(self.sudoku.isGameOver()) {
           console.log("Done");
+          console.log(self.sudoku.sudokuArray);
         }
       });
     }
