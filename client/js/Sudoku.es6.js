@@ -4,7 +4,7 @@ export default class Sudoku {
   }
 
   addMove(value, row, column) {
-    if(this.isValid(value, row, column)) {
+    if(!isNaN(value) && this.isValid(value, row, column)) {
       this.sudokuArray[row][column] = value;
       return true;
     }
@@ -37,4 +37,17 @@ export default class Sudoku {
 
     return true;
   }
+
+  isGameOver() {
+    this.sudokuArray.forEach((row, rowIndex) => {
+      row.forEach((value, columnIndex) => {
+        if(!this.isValid(value, rowIndex, columnIndex)) {
+          return false;
+        }
+      });
+    });
+
+    return true;
+  }
+
 }

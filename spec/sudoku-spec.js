@@ -27,6 +27,9 @@ const SOLVED_ARRAY = [
   [3, 4, 5, 2, 8, 6, 1, 7, 9]
 ];
 
+
+
+
 describe('Adding a move', function() {
   let sudokuArray;
 
@@ -35,27 +38,30 @@ describe('Adding a move', function() {
   });
 
   it('should fail if it is already in the row', function() {
-    let addInvalid = sudokuArray.addMove(5, 0, 2);
-
-    addInvalid.should.be.false;
+    sudokuArray.addMove(5, 0, 2).should.be.false;
   });
 
   it('should fail if it is already in the column', function() {
-    let addInvalid = sudokuArray.addMove(5, 2, 0);
-
-    addInvalid.should.be.false;
+    sudokuArray.addMove(5, 2, 0).should.be.false;
   });
 
   it('should fail if it is already in the cell', function() {
-    let addInvalid = sudokuArray.addMove(5, 1, 1);
-
-    addInvalid.should.be.false;
+    sudokuArray.addMove(5, 1, 1).should.be.false;
   });
 
   it('should pass if it is not in the row, cell, or column', function() {
-    let addInvalid = sudokuArray.addMove(1, 0, 2);
-
-    addInvalid.should.be.true;
+    sudokuArray.addMove(1, 0, 2).should.be.true;
   });
-
 });
+
+describe('function isGameOver', function() {
+  it('should fail with the incomplete Sudoku Array', function() {
+    let incompleteSudoku = new Sudoku(SOLVED_ARRAY);
+    incompleteSudoku.isGameOver().should.be.true;
+  })
+
+  it('should pass with the solved Sudoku Array', function() {
+    let solvedSudoku = new Sudoku(SOLVED_ARRAY);
+    solvedSudoku.isGameOver().should.be.true;
+  })
+})

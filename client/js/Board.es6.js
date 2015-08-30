@@ -5,16 +5,17 @@ export default class Board {
   constructor(sudoku) {
     this.sudoku = sudoku;
     $('#sudoku-container')
-      .append(this.generateBoard(this.sudoku.sudokuArray));
+      .append(this.generateBoard());
   }
 
-  generateBoard(sudokuArray) {
+  generateBoard() {
     let board = $('<table></table>');
+    let sudokuArray = this.sudoku.sudokuArray
 
-    sudokuArray.forEach((row, y) => {
+    sudokuArray.forEach((row, rowIndex) => {
       let rowElement = $('<tr class="row"></tr>');
       board.append(rowElement);
-      row.forEach((value, x) => {
+      row.forEach((value, columnIndex) => {
         let tile = this.createTile(value, y, x, sudokuArray);
         rowElement.append(tile);
       });
@@ -23,9 +24,10 @@ export default class Board {
     return board;
   }
 
-  createTile(value, y, x, sudokuArray) {
-    let tile = $(`<td class="tile" id='${y}-${x}'></td>`);
+  createTile(value, row, column) {
+    let tile = $(`<td class="tile" id='${row}-${column}'></td>`);
     let input = $(`<input placeholder="${value}" maxlength="1">`);
+
     let self = this;
 
     if (value) {
@@ -33,9 +35,11 @@ export default class Board {
     } else {
       input.on('input', function() {
         let val = parseInt($(this).val());
-        sudokuArray[y][x] = isNaN(val) ? '' : val;
-        if(self.isGameOver()) {
-          console.log("Game over");
+        if(!self.sudoku.addMove(val, row, column)) {
+          $(this).val('');
+        }
+        if(self.sudoku.isGameOver()) {
+          console.log("Done");
         }
       });
     }
@@ -44,7 +48,5 @@ export default class Board {
     return tile;
   }
 
-  isGameOver() {
-    return JSON.stringify(this.sudoku.sudokuArray) === JSON.stringify(this.sudoku.solvedArray);
-  }
+
 }
