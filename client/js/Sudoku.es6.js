@@ -1,20 +1,28 @@
-import { List } from 'immutable';
+import { fromJS, List } from 'immutable';
 
 export default class Sudoku {
   constructor(sudokuArray) {
-    this.sudokuArray = sudokuArray;
+    this.sudokuArray = fromJS(sudokuArray)
+  }
+
+  getIndex(row, column) {
+    return this.sudokuArray.get(row).get(column);
+  }
+
+  setIndex(value, row, column) {
+    this.sudokuArray = this.sudokuArray.setIn([row, column], value);
   }
 
   addMove(value, row, column) {
-    if(this.isValid(value, row, column)) {
-      this.sudokuArray[row][column] = value;
-      return true;
+    if(!this.isValid(value, row, column)) {
+      return false;
     }
-    return false;
+    this.setIndex(value, row, column);
+    return true;
   }
 
   removeMove(row, column) {
-    this.sudokuArray[row][column] = '';
+    this.setIndex('', row, column);
   }
 
   isValid(value, row, column) {
@@ -23,24 +31,23 @@ export default class Sudoku {
     }
 
     for(let i = 0; i < 9; i++) {
-      if (this.sudokuArray[row][i] === value) {
+      if (this.getIndex(row, i) === value) {
         return false;
       }
     }
 
     for(let i = 0; i < 9; i++) {
-      if (this.sudokuArray[i][column] === value) {
+      if (this.getIndex(i, column) === value) {
         return false;
       }
     }
 
-    let cellRow = Math.floor(row / 3);
-    let cellColumn = Math.floor(column / 3);
+    let cellRow = row - (row % 3);
+    let cellColumn = column - (column % 3);
 
     for(let i = cellRow; i < cellRow + 3; i++) {
       for(let j = cellColumn; j < cellColumn + 3; j++) {
-        console.log(i, j);
-        if (this.sudokuArray[i][j] === value) {
+        if (this.getIndex(i, j) === value) {
           return false;
         }
       }
@@ -58,8 +65,8 @@ export default class Sudoku {
       let checkHorizontal = checkArray;
 
       for(let j = 0; j < 9; j++) {
-        let vertical = this.sudokuArray[j][i];
-        let horizontal = this.sudokuArray[i][j];
+        let vertical = this.getIndex(j, i);
+        let horizontal = this.getIndex(i, j);
         let verticalIndex = checkVertical.indexOf(vertical);
         let horizontalIndex = checkHorizontal.indexOf(horizontal);
         if(verticalIndex < 0 || horizontalIndex < 0) {
@@ -75,7 +82,7 @@ export default class Sudoku {
         let checkCell = checkArray;
         for(let i = row; i < row + 3; i++) {
           for(let j = column; j < column + 3; j++) {
-            let value = this.sudokuArray[i][j];
+            let value = this.getIndex(i, j);
             let index = checkCell.indexOf(value);
             if(index < 0) {
               return false;
