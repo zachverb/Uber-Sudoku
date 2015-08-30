@@ -1,22 +1,40 @@
-let sudokuArray = [
-  ['', '', '', 7, '', '', 8, 6, ''],
-  [1, '', '', 2, '', '', '', 4, ''],
-  ['', '', '', 4, 8, 5, '', '', ''],
-  ['', '', 3, '', '', 9, 6, 7, ''],
-  ['', '', 9, '', '', '', 4, '', ''],
-  ['', 7, 5, 3, '', '', 9, '', ''],
-  ['', '', '', 9, 7, 4, '', '', ''],
-  ['', 9, '', '', '', 2, '', '', 1],
-  ['', 2, 8, '', '', 3, '', '', '']
-];
-
 export default class Sudoku {
-  constructor() {
+  constructor(sudokuArray) {
     this.sudokuArray = sudokuArray;
-    this.solvedArray = this.solve(this.sudokuArray);
   }
 
-  solve(array) {
-    return array;
+  addMove(value, row, column) {
+    if(this.isValid(value, row, column)) {
+      this.sudokuArray[row][column] = value;
+      return true;
+    }
+    return false;
+  } 
+
+  isValid(value, row, column) {
+    for(let i = 0; i < 9; i++) {
+      if (this.sudokuArray[row][i] === value) {
+        return false;
+      }
+    }
+
+    for(let i = 0; i < 9; i++) {
+      if (this.sudokuArray[i][column] === value) {
+        return false;
+      }
+    }
+
+    let cellRow = Math.floor(row / 3);
+    let cellColumn = Math.floor(column / 3);
+
+    for(let i = cellRow; i < cellRow + 3; i++) {
+      for(let j = cellColumn; j < cellColumn + 3; j++) {
+        if (this.sudokuArray[i][j] === value) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 }

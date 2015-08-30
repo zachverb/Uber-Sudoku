@@ -2,8 +2,8 @@ import $ from 'jquery';
 import Sudoku from 'js/Sudoku';
 
 export default class Board {
-  constructor() {
-    this.sudoku = new Sudoku();
+  constructor(sudoku) {
+    this.sudoku = sudoku;
     $('#sudoku-container')
       .append(this.generateBoard(this.sudoku.sudokuArray));
   }
