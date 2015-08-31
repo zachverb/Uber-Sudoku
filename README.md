@@ -8,7 +8,9 @@ In my development, I tried to use the minimal amount of libraries that would opt
 
 I used **webpack** as my bundler, which will not only bundle all of my javascript and less assets, but also transpile the ES6 to standard javascript useable in modern browsers. I chose not to use a more general build system like **gulp** or **grunt** because I didn't think it would be necessary for such a small project.
 
-As far as small utility libraries go, I only chose to use **Immutable.js** and **jQuery**. jQuery was important for the necessary DOM manipulation helper functions. I used Immutable because I am uncomfortable with Javascript's pass-by-reference methods. I only had to instantiate one Immutable List for my isGameOver checking algorithm instead of one for each block. I also didn't have to worry about my constants being mutated on each export, so I could create a new game based off of the same array as many times as I needed. Beyond that, the basic helper functions are easy for me to understand.
+As far as small utility libraries go, I only chose to use **Immutable.js** and **jQuery**. jQuery was important for the necessary DOM manipulation helper functions. I used Immutable because I wanted to avoid Javascript's pass-by-reference pattern. I only had to instantiate one Immutable List for my isGameOver checking algorithm instead of one for each block. I also didn't have to worry about my constants being mutated on each export, so I could create a new game based off of the same array as many times as I needed. Beyond that, the basic helper functions are easy for me to understand.
+
+I used **Node** and **Express** for my server side, even though it's mainly serving static assets. It's the simplest way of deploying it. Maybe **Express** is more than what was needed here, but I am comfortable with using it and deploying quickly.
 
 ## Testing
 

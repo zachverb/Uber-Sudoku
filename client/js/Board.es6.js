@@ -35,7 +35,7 @@ export default class BoardComponent {
     let self = this;
 
     if (value) {
-      input.attr('readonly', 'readonly');
+      input.prop('disabled', true);
       input.addClass('readonly');
     } else {
       input.on('input', function() {
