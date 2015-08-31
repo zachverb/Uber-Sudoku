@@ -31,7 +31,7 @@ export default class BoardComponent {
 
   createTile(value, row, column) {
     let tile = $(`<td class="tile" id='${row}-${column}'></td>`);
-    let input = $(`<input placeholder="${value}" maxlength="1">`);
+    let input = $(`<input type="tel" placeholder="${value}" maxlength="1">`);
     let self = this;
 
     if (value) {
