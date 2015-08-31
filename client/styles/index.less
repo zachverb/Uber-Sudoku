@@ -13,7 +13,7 @@
 
 #sudoku-container {
   height:100vh;
-  padding: 20px;
+  padding-top: 20px;
 }
 
 #game-over {
@@ -84,20 +84,19 @@ table {
 @media only screen and (max-width: 480px) {
   #sudoku-container {
     padding: 0px;
-    min-width: 480px;
+    max-width: 480px;
     width: 100%
   }
 
   table {
-    width: 100%;
-  }
-
-  .tile {
-    text-size: 10pt;
-    width: 25px !important;
-    height: 25px !important;
-    input {
-      text-size: 15pt;
+    .tile {
+      min-width: 30px;
+      min-height: 30px;
+      width: 30px;
+      height: 30px;
+      input {
+        text-size: 10px;
+      }
     }
   }
 }
