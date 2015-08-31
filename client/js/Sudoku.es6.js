@@ -14,15 +14,12 @@ export default class Sudoku {
   }
 
   addMove(value, row, column) {
-    if(!this.isValid(value, row, column)) {
-      return false;
+    if(value === this.getIndex(row, column) || this.isValid(value, row, column)) {
+      this.setIndex(value, row, column);
+      return true;
     }
-    this.setIndex(value, row, column);
-    return true;
-  }
 
-  removeMove(row, column) {
-    this.setIndex('', row, column);
+    return false;
   }
 
   isValid(value, row, column) {

@@ -1,11 +1,10 @@
 import $ from 'jquery';
 import Sudoku from 'js/Sudoku';
 
-export default class Board {
+export default class BoardComponent {
   constructor(sudoku) {
     this.sudoku = sudoku;
-    $('#sudoku-container')
-      .append(this.generateBoard());
+    $('#sudoku-container').append(this.generateBoard());
   }
 
   generateBoard() {
@@ -15,6 +14,7 @@ export default class Board {
     sudokuArray.forEach((row, rowIndex) => {
       let rowElement = $('<tr class="row"></tr>');
       board.append(rowElement);
+
       row.forEach((value, columnIndex) => {
         let tile = this.createTile(value, rowIndex, columnIndex);
         rowElement.append(tile);
@@ -27,25 +27,19 @@ export default class Board {
   createTile(value, row, column) {
     let tile = $(`<td class="tile" id='${row}-${column}'></td>`);
     let input = $(`<input placeholder="${value}" maxlength="1">`);
-
     let self = this;
 
     if (value) {
       input.attr('readonly', 'readonly');
+      input.addClass('readonly');
     } else {
-      input.keyup(function() {
-        if(!$(this).val()) {
-          self.sudoku.removeMove(row, column);
-        }
-      });
       input.on('input', function() {
+        console.log("input");
         let val = parseInt($(this).val());
-        if(val !== '' && !self.sudoku.addMove(val, row, column)) {
+        if(isNaN(val) || !self.sudoku.addMove(val, row, column)) {
           $(this).val('');
-        }
-        if(self.sudoku.isGameOver()) {
+        } else if(self.sudoku.isGameOver()) {
           console.log("Done");
-          console.log(self.sudoku.sudokuArray);
         }
       });
     }
@@ -53,6 +47,4 @@ export default class Board {
     tile.append(input);
     return tile;
   }
-
-
 }
