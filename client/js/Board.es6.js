@@ -43,6 +43,7 @@ export default class BoardComponent {
         let val = parseInt($(this).val());
         if(isNaN(val) || !self.sudoku.addMove(val, row, column)) {
           $(this).val('');
+          self.sudoku.setIndex('', row, column);
         } else if(self.sudoku.isGameOver()) {
           self.gameOver();
         }
