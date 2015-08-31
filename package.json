@@ -19,12 +19,12 @@
     "less-loader": "^2.2.0",
     "mocha": "^2.2.5",
     "style-loader": "^0.12.3",
-    "uber-standard": "^4.0.1",
-    "webpack": "^1.12.0"
+    "uber-standard": "^4.0.1"
   },
   "dependencies": {
     "express": "^4.13.3",
     "immutable": "^3.7.4",
-    "jquery": "^2.1.4"
+    "jquery": "^2.1.4",
+    "webpack": "^1.12.0"
   }
 }
