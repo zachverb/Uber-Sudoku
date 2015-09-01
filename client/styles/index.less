@@ -17,8 +17,30 @@
 }
 
 #game-over {
-  padding: 20px;
+  z-index: 1;
+  display: none;
   position: absolute;
+  height:100vh;
+  top:0px;
+  width: 100%;
+  text-align: center;
+
+  h1 {
+    color: @primary-black;
+    font-size: 30pt;
+    margin: auto;
+    margin-top: 40vh;
+  }
+
+  h2 {
+    color: @primary-black;
+    margin-top: 10vh;
+  }
+
+  h2:hover {
+    color: @primary-blue;
+    cursor: pointer;
+  }
 }
 
 h1 {
@@ -97,6 +119,24 @@ table {
       input {
         text-size: 10px;
       }
+    }
+  }
+
+  #game-over {
+    h1 {
+      color: @primary-black;
+      font-size: 20pt;
+      margin: auto;
+      margin-top: 20vh;
+    }
+
+    h2 {
+      color: @primary-black;
+      margin-top: 5vh;
+    }
+
+    h2:hover {
+      color: @primary-blue;
     }
   }
 }

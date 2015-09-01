@@ -5,7 +5,6 @@ export default class BoardComponent {
   constructor(sudoku) {
     this.sudoku = sudoku;
     $('#sudoku-container').append(this.generateBoard());
-    $('#sudoku-container').append(this.generateOptions());
   }
 
   generateBoard() {
@@ -54,8 +53,28 @@ export default class BoardComponent {
     return tile;
   }
 
-  //gameOver() {
-  //  $('#sudoku-container').append()
-  //}
+  gameOver() {
+    $("#sudoku-container").fadeTo(2000, 0.33 );
+    let header = $("<h1>").text("Game Over");
+    let playAgain = $("<h2>").text("Play again?");
+    playAgain.click(() => {
+      this.restart();
+    })
+    $("#game-over")
+      .append(header)
+      .append(playAgain);
+
+    $("#game-over").fadeIn(2000);
+  }
+
+  restart() {
+    $("#game-over").fadeOut(1000);
+    $("#game-over").empty();
+    $('#sudoku-container').empty();
+    $("#sudoku-container").fadeTo(1000, 1);
+
+    this.sudoku.start();
+    $('#sudoku-container').append(this.generateBoard());
+  }
 
 }

@@ -1,8 +1,9 @@
 import { fromJS, List } from 'immutable';
+import { SUDOKU_ARRAY } from './constants';
 
 export default class Sudoku {
-  constructor(sudokuArray) {
-    this.sudokuArray = fromJS(sudokuArray)
+  constructor() {
+    this.start();
   }
 
   getIndex(row, column) {
@@ -90,6 +91,10 @@ export default class Sudoku {
       }
     }
     return true;
+  }
+
+  start() {
+    this.sudokuArray = fromJS(SUDOKU_ARRAY);
   }
 
 }
