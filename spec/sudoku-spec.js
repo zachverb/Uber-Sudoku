@@ -1,6 +1,7 @@
 import chai from 'chai';
 import Board from '../client/js/Board.es6.js';
 import { SUDOKU_ARRAY, SOLVED_ARRAY } from '../client/js/constants.es6.js';
+import {fromJS} from 'immutable';
 
 let should = chai.should();
 
@@ -23,7 +24,23 @@ describe('Checking for conflicts', function() {
     conflict.column.should.equal(3);
   });
 
-  it('should find the vertical conflict at (3, 0) and the horizontal at (2, 2), and in the cell.', function() {
+  it('should find the cell conflict at (2, 1)', function() {
+    let conflicts = board.findConflicts(9, 0, 2);
+    conflicts.size.should.equal(1);
+    let conflict = conflicts.get(0);
+    conflict.row.should.equal(2);
+    conflict.column.should.equal(1);
+  });
+
+  it('should find the horizontal conflict at (4, 0)', function() {
+    let conflicts = board.findConflicts(4, 2, 0);
+    conflicts.size.should.equal(1);
+    let conflict = conflicts.get(0);
+    conflict.row.should.equal(4);
+    conflict.column.should.equal(0);
+  });
+
+  it('should find the vertical conflict at (3, 0) and the horizontal at (2, 2)', function() {
     let conflicts = board.findConflicts(8, 2, 0);
     conflicts.size.should.equal(2);
     let conflictRow = conflicts.get(0);
