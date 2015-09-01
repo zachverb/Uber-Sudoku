@@ -93,12 +93,21 @@ table {
   }
 }
 
-::-webkit-input-placeholder, :-moz-placeholder,
-::-moz-placeholder, :-ms-input-placeholder {
+*::-webkit-input-placeholder {
+  .tile-text;
+}
+*:-moz-placeholder {
+  .tile-text;
+}
+*::-moz-placeholder {
+  .tile-text;
+}
+*:-ms-input-placeholder {
   .tile-text;
 }
 
 .tile-text {
+  color: @primary-blue;
   text-align: center;
   opacity:  1;
 }
