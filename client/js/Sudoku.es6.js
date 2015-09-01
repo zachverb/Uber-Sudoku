@@ -1,13 +1,7 @@
 import { fromJS, List } from 'immutable';
-import { SUDOKU_ARRAY, SOLVED_ARRAY } from './constants.es6.js';
 
 export default class Sudoku {
-  constructor(test) {
-    this.start(test);
-  }
-
-  start(test) {
-    let array = test ? SOLVED_ARRAY : SUDOKU_ARRAY;
+  constructor(array) {
     this.sudokuArray = fromJS(array);
   }
 
@@ -69,10 +63,10 @@ export default class Sudoku {
 
       if(value === '' || index < 0) {
         return false;
-      };
+      }
 
       return list.remove(index);
-    }
+    };
 
     // check all rows horizontally
     for(let i = 0; i < 9; i++) {

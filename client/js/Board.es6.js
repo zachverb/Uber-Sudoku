@@ -1,10 +1,10 @@
 import $ from 'jquery';
 import Sudoku from 'js/Sudoku';
+import { SUDOKU_ARRAY } from './constants.es6.js';
 
 export default class BoardComponent {
-  constructor(sudoku) {
-    this.sudoku = sudoku;
-    $('#sudoku-container').append(this.generateBoard());
+  constructor() {
+    this.startGame();
   }
 
   generateBoard() {
@@ -43,8 +43,8 @@ export default class BoardComponent {
         }
         let conflicts = self.sudoku.findConflicts(val, row, column);
         self.highlightConflicts(conflicts);
-        if(conflicts.size === 0 && isGameOver()) {
-          return gameOver();
+        if(conflicts.size === 0 && self.sudoku.isGameOver()) {
+          self.gameOver();
         }
       });
     }
@@ -81,8 +81,11 @@ export default class BoardComponent {
     $('#game-over').empty();
     $('#sudoku-container').empty();
     $('#sudoku-container').fadeTo(1000, 1);
+    this.startGame();
+  }
 
-    this.sudoku.start();
+  startGame() {
+    this.sudoku = new Sudoku(SUDOKU_ARRAY);
     $('#sudoku-container').append(this.generateBoard());
   }
 
