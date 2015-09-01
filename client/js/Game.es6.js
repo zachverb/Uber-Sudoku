@@ -2,6 +2,10 @@ import $ from 'jquery';
 import Board from 'js/Board';
 import { SUDOKU_ARRAY } from './constants.es6.js';
 
+/**
+ * The main Sudoku game class. Creates a new board based off array
+ * and generates the DOM elements. Also handles start, end, restart logic.
+ */
 export default class Game {
   constructor() {
     this.board = new Board(SUDOKU_ARRAY);
@@ -21,9 +25,11 @@ export default class Game {
     $("#sudoku-container").fadeTo(2000, 0.33 );
     let header = $("<h1>").text("Game Over");
     let playAgain = $("<h2>").text("Play again?");
+
     playAgain.click(() => {
       this.restart();
-    })
+    });
+
     $("#game-over")
       .append(header)
       .append(playAgain);
@@ -44,12 +50,13 @@ export default class Game {
   }
 
   /**
+   * @returns { <table> } board
    * Creates and returns a table DOM element and iterates over the
    * sudoku array to create elements.
    */
   generateBoard() {
     let board = $('<table></table>');
-    let sudokuArray = this.board.sudokuArray
+    let sudokuArray = this.board.sudokuArray;
 
     sudokuArray.forEach((row, rowIndex) => {
       let rowElement = $('<tr class="row"></tr>');
@@ -65,10 +72,10 @@ export default class Game {
   }
 
   /**
-   * @param {number} value - The Sudoku number value for the tile.
-   * @param {number} row - The index of the outer sudoku array
-   * @param {number} column - The index of the inner sudoku array
-   *
+   * @param { number } value - The Sudoku number value for the tile.
+   * @param { number } row - The index of the outer sudoku array
+   * @param { number } column - The index of the inner sudoku array
+   * @returns { <td> } tile - the DOM element representing a single tile
    * Returns a new tile with an input inside of it.
    * If a value exists, the input will be disabled.
    * Otherwise it will add a listener that will only
@@ -87,14 +94,17 @@ export default class Game {
     } else {
       input.on('input', function() {
         let val = parseInt($(this).val());
+
         if(isNaN(val) || val < 1) {
           $(this).val('');
           self.board.setIndex('', row, column);
         } else {
           self.board.setIndex(val, row, column);
         }
+
         let conflicts = self.board.findConflicts(val, row, column);
         self.highlightConflicts(conflicts);
+
         if(conflicts.size === 0 && self.board.isSolved()) {
           self.endGame();
         }
@@ -106,13 +116,14 @@ export default class Game {
   }
 
   /**
-   * @param {List} conflicts - A list of objects holding the row and column
+   * @param { List } conflicts - A list of objects holding the row and column
    *                           indexes of the conflicting values.
    *
    * Unhighlights the old conflicts, highlights the new
    */
   highlightConflicts(conflicts) {
     $('.conflict').removeClass('conflict');
+
     // destructuring the inner objects to define the row and column attributes
     conflicts.forEach(({row, column}) => {
       let id = `#${row}-${column}`;

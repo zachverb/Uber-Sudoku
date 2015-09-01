@@ -1,6 +1,14 @@
 import { fromJS, List } from 'immutable';
 
+/**
+ * The board class manipulates and holds the data layer.
+ * Uses an Immutable List to hold board's state.
+ */
 export default class Board {
+  /**
+   * @param {array} - translates array into Immutable List and uses it
+   *                  as the Board's state.
+   */
   constructor(array) {
     this.sudokuArray = fromJS(array);
   }
@@ -14,9 +22,9 @@ export default class Board {
   }
 
   /*
-   * @param {number} value - The Sudoku number value for the tile.
-   * @param {number} row - The index of the outer sudoku array
-   * @param {number} column - The index of the inner sudoku array
+   * @param { number } value - The Sudoku number value for the tile.
+   * @param { number } row - The index of the outer sudoku array
+   * @param { number } column - The index of the inner sudoku array
    *
    * Checks for conflicting values by checking the conflicts in the row,
    * column, and cell. Returns an Immutable list of the aggregated conflicts.
@@ -62,24 +70,32 @@ export default class Board {
     return conflicts;
   }
 
+  /*
+   * @param { number } row - The index of the outer sudoku array
+   * @param { number } column - The index of the inner sudoku array
+   * @param { List } list - the current list of unused values
+   * @returns { List } - null if unsolved, otherwise list without the value
+   */
+  checkLocation(row, column, list) {
+    let value = this.getIndex(row, column);
+    let index = list.indexOf(value);
+
+    if(value === '' || index < 0) {
+      return null;
+    }
+
+    return list.remove(index);
+  }
+
   /**
-   * Goes through the current board and checks to see if
-   * each row, column, and cell has the numbers 1-9 only occur once.
-   * Returns false if it fails.
+   * Creates a list of the unused values for a given row, column, or cell.
+   * Goes through the current board and checks each location.
+   * Will remove the values from the list as they are found. If the index
+   * returns -1, the puzzle is not solved.
+   * @returns { boolean }
    */
   isSolved() {
     let checkArray = List([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
-    let checkLocation = (row, column, list) => {
-      let value = this.getIndex(row, column);
-      let index = list.indexOf(value);
-
-      if(value === '' || index < 0) {
-        return false;
-      }
-
-      return list.remove(index);
-    };
 
     // check all rows and columns
     for(let i = 0; i < 9; i++) {
@@ -87,8 +103,8 @@ export default class Board {
       let checkRow = checkArray;
 
       for(let j = 0; j < 9; j++) {
-        checkColumn = checkLocation(j, i, checkColumn);
-        checkRow = checkLocation(i, j, checkRow);
+        checkColumn = this.checkLocation(j, i, checkColumn);
+        checkRow = this.checkLocation(i, j, checkRow);
         if(!checkColumn || !checkRow) {
           return false;
         }
@@ -101,7 +117,7 @@ export default class Board {
         let checkCell = checkArray;
         for(let i = row; i < row + 3; i++) {
           for(let j = column; j < column + 3; j++) {
-            checkCell = checkLocation(i, j, checkCell);
+            checkCell = this.checkLocation(i, j, checkCell);
             if(!checkCell) {
               return false;
             }
