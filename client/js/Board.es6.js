@@ -1,122 +1,115 @@
-import $ from 'jquery';
-import Sudoku from 'js/Sudoku';
-import { SUDOKU_ARRAY } from './constants.es6.js';
+import { fromJS, List } from 'immutable';
 
 export default class Board {
-  constructor() {
-    this.startGame();
+  constructor(array) {
+    this.sudokuArray = fromJS(array);
   }
 
-  /**
-   * creates a new Sudoku object, and generates a board component from it.
-   */
-  startGame() {
-    this.sudoku = new Sudoku(SUDOKU_ARRAY);
-    $('#sudoku-container').append(this.generateBoard());
+  getIndex(row, column) {
+    return this.sudokuArray.get(row).get(column);
   }
 
-  /**
-   * Simple animation that will give the option to restart.
-   */
-  endGame() {
-    $("#sudoku-container").fadeTo(2000, 0.33 );
-    let header = $("<h1>").text("Game Over");
-    let playAgain = $("<h2>").text("Play again?");
-    playAgain.click(() => {
-      this.restart();
-    })
-    $("#game-over")
-      .append(header)
-      .append(playAgain);
-
-    $("#game-over").fadeIn(2000);
+  setIndex(value, row, column) {
+    this.sudokuArray = this.sudokuArray.setIn([row, column], value);
   }
 
-  /**
-   * Empties the existing contents and starts the game again
-   */
-  restart() {
-    $('#game-over').fadeOut(1000);
-    $('#game-over').empty();
-    $('#sudoku-container').empty();
-    $('#sudoku-container').fadeTo(1000, 1);
-    this.startGame();
-  }
-
-  /**
-   * Creates and returns a table DOM element and iterates over the
-   * sudoku array to create elements.
-   */
-  generateBoard() {
-    let board = $('<table></table>');
-    let sudokuArray = this.sudoku.sudokuArray
-
-    sudokuArray.forEach((row, rowIndex) => {
-      let rowElement = $('<tr class="row"></tr>');
-      board.append(rowElement);
-
-      row.forEach((value, columnIndex) => {
-        let tile = this.createTile(value, rowIndex, columnIndex);
-        rowElement.append(tile);
-      });
-    });
-
-    return board;
-  }
-
-  /**
+  /*
    * @param {number} value - The Sudoku number value for the tile.
    * @param {number} row - The index of the outer sudoku array
    * @param {number} column - The index of the inner sudoku array
    *
-   * Returns a new tile with an input inside of it.
-   * If a value exists, the input will be disabled.
-   * Otherwise it will add a listener that will only
-   * allow numbers to 1-9 to be added.
-   * Highlights conflicts on conflicting values
-   * Ends game when there are no conflicts and the sudoku object is over.
+   * Checks for conflicting values by checking the conflicts in the row,
+   * column, and cell. Returns an Immutable list of the aggregated conflicts.
    */
-  createTile(value, row, column) {
-    let tile = $(`<td class="tile" id="${row}-${column}"></td>`);
-    let input = $(`<input type="tel" placeholder="${value}" maxlength="1">`);
-    let self = this;
+  findConflicts(value, row, column) {
+    let conflicts = new List();
 
-    if (value) {
-      input.prop('disabled', true);
-      input.addClass('readonly');
-    } else {
-      input.on('input', function() {
-        let val = parseInt($(this).val());
-        if(isNaN(val) || val < 1) {
-          $(this).val('');
-          self.sudoku.setIndex('', row, column);
-        } else {
-          self.sudoku.setIndex(val, row, column);
-        }
-        let conflicts = self.sudoku.findConflicts(val, row, column);
-        self.highlightConflicts(conflicts);
-        if(conflicts.size === 0 && self.sudoku.isGameOver()) {
-          self.endgame();
-        }
-      });
+    // check all values in the same row
+    for(let i = 0; i < 9; i++) {
+      if (this.getIndex(row, i) === value && i !== column) {
+        conflicts = conflicts.push({
+          row,
+          column: i
+        });
+      }
     }
 
-    tile.append(input);
-    return tile;
+    // check all values in the same column
+    for(let i = 0; i < 9; i++) {
+      if (this.getIndex(i, column) === value && i !== row) {
+        conflicts = conflicts.push({
+          row: i,
+          column
+        });
+      }
+    }
+
+    let cellRow = row - (row % 3);
+    let cellColumn = column - (column % 3);
+
+    // check all values in the cell
+    for(let i = cellRow; i < cellRow + 3; i++) {
+      for(let j = cellColumn; j < cellColumn + 3; j++) {
+        if (this.getIndex(i, j) === value && i !== row && j != column) {
+          conflicts = conflicts.push({
+            row: i,
+            column: j
+          });
+        }
+      }
+    }
+
+    return conflicts;
   }
 
   /**
-   * @param {List} conflicts - A list of objects holding the row and column
-   *                           indexes of the conflicting values.
-   *
-   * Unhighlights the old conflicts, highlights the new
+   * Goes through the current board and checks to see if
+   * each row, column, and cell has the numbers 1-9 only occur once.
+   * Returns false if it fails.
    */
-  highlightConflicts(conflicts) {
-    $('.conflict').removeClass('conflict');
-    // destructuring the inner objects to define the row and column attributes
-    conflicts.forEach(({row, column}) => {
-      let id = `#${row}-${column}`;
-      $(id).addClass('conflict');
-    });
+  isSolved() {
+    let checkArray = List([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+    let checkLocation = (row, column, list) => {
+      let value = this.getIndex(row, column);
+      let index = list.indexOf(value);
+
+      if(value === '' || index < 0) {
+        return false;
+      }
+
+      return list.remove(index);
+    };
+
+    // check all rows and columns
+    for(let i = 0; i < 9; i++) {
+      let checkColumn = checkArray;
+      let checkRow = checkArray;
+
+      for(let j = 0; j < 9; j++) {
+        checkColumn = checkLocation(j, i, checkColumn);
+        checkRow = checkLocation(i, j, checkRow);
+        if(!checkColumn || !checkRow) {
+          return false;
+        }
+      }
+    }
+
+    // check all cells
+    for(let row = 0; row < 9; row+=3) {
+      for (let column = 0; column < 9; column += 3) {
+        let checkCell = checkArray;
+        for(let i = row; i < row + 3; i++) {
+          for(let j = column; j < column + 3; j++) {
+            checkCell = checkLocation(i, j, checkCell);
+            if(!checkCell) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    return true;
   }
 }
