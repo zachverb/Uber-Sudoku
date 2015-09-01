@@ -1,10 +1,12 @@
 import 'styles/index.less';
 import Board from 'js/Board';
-import Sudoku from 'js/Sudoku';
+import Game from 'js/Game';
 
 main();
 
 function main() {
-  let sudoku = new Sudoku();
-  let board = new Board(sudoku);
+  let board = new Board();
+  let game = new Game(board);
+
+  game.startGame();
 }

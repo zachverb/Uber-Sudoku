@@ -1,17 +1,16 @@
 import $ from 'jquery';
-import Board from 'js/Sudoku';
+import Board from 'js/Board';
 import { SUDOKU_ARRAY } from './constants.es6.js';
 
 export default class Game {
   constructor() {
-    this.startGame();
+    this.board = new Board(SUDOKU_ARRAY);
   }
 
   /**
    * creates a new Sudoku object, and generates a board component from it.
    */
   startGame() {
-    this.sudoku = new Sudoku(SUDOKU_ARRAY);
     $('#sudoku-container').append(this.generateBoard());
   }
 
@@ -40,6 +39,7 @@ export default class Game {
     $('#game-over').empty();
     $('#sudoku-container').empty();
     $('#sudoku-container').fadeTo(1000, 1);
+    this.Board = new Board(SUDOKU_ARRAY);
     this.startGame();
   }
 
@@ -49,7 +49,7 @@ export default class Game {
    */
   generateBoard() {
     let board = $('<table></table>');
-    let sudokuArray = this.sudoku.sudokuArray
+    let sudokuArray = this.board.sudokuArray
 
     sudokuArray.forEach((row, rowIndex) => {
       let rowElement = $('<tr class="row"></tr>');
@@ -89,14 +89,14 @@ export default class Game {
         let val = parseInt($(this).val());
         if(isNaN(val) || val < 1) {
           $(this).val('');
-          self.sudoku.setIndex('', row, column);
+          self.board.setIndex('', row, column);
         } else {
-          self.sudoku.setIndex(val, row, column);
+          self.board.setIndex(val, row, column);
         }
-        let conflicts = self.sudoku.findConflicts(val, row, column);
+        let conflicts = self.board.findConflicts(val, row, column);
         self.highlightConflicts(conflicts);
-        if(conflicts.size === 0 && self.sudoku.isSolved()) {
-          self.endgame();
+        if(conflicts.size === 0 && self.board.isSolved()) {
+          self.endGame();
         }
       });
     }
