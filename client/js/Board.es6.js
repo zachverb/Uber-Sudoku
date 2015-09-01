@@ -24,10 +24,6 @@ export default class BoardComponent {
     return board;
   }
 
-  generateOptions() {
-
-  }
-
   createTile(value, row, column) {
     let tile = $(`<td class="tile" id="${row}-${column}"></td>`);
     let input = $(`<input type="tel" placeholder="${value}" maxlength="1">`);
@@ -43,12 +39,12 @@ export default class BoardComponent {
           $(this).val('');
           self.sudoku.setIndex('', row, column);
         } else {
-          let conflicts = self.sudoku.findConflicts(val, row, column);
-          conflicts.forEach(self.highlightConflict);
           self.sudoku.setIndex(val, row, column);
-          if(self.sudoku.isGameOver()) {
-            self.gameOver();
+          let conflicts = self.sudoku.findConflicts();
+          if(conflicts.size === 0 && self.sudoku.isCompleted()) {
+            return gameOver();
           }
+          conflicts.forEach(self.highlightConflict);
         }
       });
     }
