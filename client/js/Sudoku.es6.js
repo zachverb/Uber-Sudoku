@@ -14,7 +14,12 @@ export default class Sudoku {
   }
 
   /*
-   * Checks for invalid locations of
+   * @param {number} value - The Sudoku number value for the tile.
+   * @param {number} row - The index of the outer sudoku array
+   * @param {number} column - The index of the inner sudoku array
+   *
+   * Checks for conflicting values by checking the conflicts in the row,
+   * column, and cell. Returns an Immutable list of the aggregated conflicts.
    */
   findConflicts(value, row, column) {
     let conflicts = new List();
@@ -54,6 +59,11 @@ export default class Sudoku {
     return conflicts;
   }
 
+  /**
+   * Goes through the current board and checks to see if
+   * each row, column, and cell has the numbers 1-9 only occur once.
+   * Returns false if it fails.
+   */
   isGameOver() {
     let checkArray = List([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
@@ -68,20 +78,21 @@ export default class Sudoku {
       return list.remove(index);
     };
 
-    // check all rows horizontally
+    // check all rows and columns
     for(let i = 0; i < 9; i++) {
-      let checkVertical = checkArray;
-      let checkHorizontal = checkArray;
+      let checkColumn = checkArray;
+      let checkRow = checkArray;
 
       for(let j = 0; j < 9; j++) {
-        checkVertical = checkLocation(j, i, checkVertical);
-        checkHorizontal = checkLocation(i, j, checkHorizontal);
-        if(!checkVertical || !checkHorizontal) {
+        checkColumn = checkLocation(j, i, checkColumn);
+        checkRow = checkLocation(i, j, checkRow);
+        if(!checkColumn || !checkRow) {
           return false;
         }
       }
     }
 
+    // check all cells
     for(let row = 0; row < 9; row+=3) {
       for (let column = 0; column < 9; column += 3) {
         let checkCell = checkArray;
