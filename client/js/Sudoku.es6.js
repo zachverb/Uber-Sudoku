@@ -14,29 +14,32 @@ export default class Sudoku {
     this.sudokuArray = this.sudokuArray.setIn([row, column], value);
   }
 
-  addMove(value, row, column) {
-    if(value === this.getIndex(row, column) || this.isValid(value, row, column)) {
-      this.setIndex(value, row, column);
-      return true;
-    }
+  /*
+   * Checks for invalid locations of
+   */
+  findConflicts(value, row, column) {
 
-    return false;
-  }
-
-  isValid(value, row, column) {
     if(value === '') {
       return false;
     }
 
+    let conflicts = new List();
+
     for(let i = 0; i < 9; i++) {
       if (this.getIndex(row, i) === value) {
-        return false;
+        conflicts = conflicts.push({
+          row,
+          column: i
+        });
       }
     }
 
     for(let i = 0; i < 9; i++) {
       if (this.getIndex(i, column) === value) {
-        return false;
+        conflicts = conflicts.push({
+          row: i,
+          column
+        });
       }
     }
 
@@ -46,12 +49,16 @@ export default class Sudoku {
     for(let i = cellRow; i < cellRow + 3; i++) {
       for(let j = cellColumn; j < cellColumn + 3; j++) {
         if (this.getIndex(i, j) === value) {
-          return false;
+          conflicts = conflicts.push({
+            row: i,
+            column: j
+          });
         }
       }
     }
 
-    return true;
+    console.log(fromJS(conflicts));
+    return conflicts;
   }
 
   isGameOver() {

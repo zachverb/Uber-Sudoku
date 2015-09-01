@@ -29,7 +29,7 @@ export default class BoardComponent {
   }
 
   createTile(value, row, column) {
-    let tile = $(`<td class="tile" id='${row}-${column}'></td>`);
+    let tile = $(`<td class="tile" id="${row}-${column}"></td>`);
     let input = $(`<input type="tel" placeholder="${value}" maxlength="1">`);
     let self = this;
 
@@ -38,19 +38,28 @@ export default class BoardComponent {
       input.addClass('readonly');
     } else {
       input.on('input', function() {
-        console.log("input");
         let val = parseInt($(this).val());
-        if(isNaN(val) || !self.sudoku.addMove(val, row, column) || val < 1) {
+        if(isNaN(val) || val < 1) {
           $(this).val('');
           self.sudoku.setIndex('', row, column);
-        } else if(self.sudoku.isGameOver()) {
-          self.gameOver();
+        } else {
+          let conflicts = self.sudoku.findConflicts(val, row, column);
+          conflicts.forEach(self.highlightConflict);
+          self.sudoku.setIndex(val, row, column);
+          if(self.sudoku.isGameOver()) {
+            self.gameOver();
+          }
         }
       });
     }
 
     tile.append(input);
     return tile;
+  }
+
+  highlightConflict({row, column}) {
+    let id = `#${row}-${column}`;
+    $(id).addClass('conflict');
   }
 
   gameOver() {
@@ -68,10 +77,10 @@ export default class BoardComponent {
   }
 
   restart() {
-    $("#game-over").fadeOut(1000);
-    $("#game-over").empty();
+    $('#game-over').fadeOut(1000);
+    $('#game-over').empty();
     $('#sudoku-container').empty();
-    $("#sudoku-container").fadeTo(1000, 1);
+    $('#sudoku-container').fadeTo(1000, 1);
 
     this.sudoku.start();
     $('#sudoku-container').append(this.generateBoard());
