@@ -35,12 +35,12 @@ let should = chai.should();
 
 describe('function isGameOver', function() {
   it('should fail with the incomplete Sudoku Array', function() {
-    let incompleteSudoku = new Sudoku(SUDOKU_ARRAY);
+    let incompleteSudoku = new Sudoku();
     incompleteSudoku.isGameOver().should.be.false;
   })
 
   it('should pass with the solved Sudoku Array', function() {
-    let solvedSudoku = new Sudoku(SOLVED_ARRAY);
-    solvedSudoku.findConflicts().size.should.equal(0);
+    let solvedSudoku = new Sudoku(true);
+    solvedSudoku.isGameOver().should.be.true;
   })
 })

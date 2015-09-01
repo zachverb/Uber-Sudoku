@@ -1,9 +1,14 @@
 import { fromJS, List } from 'immutable';
-import { SUDOKU_ARRAY } from './constants.es6.js';
+import { SUDOKU_ARRAY, SOLVED_ARRAY } from './constants.es6.js';
 
 export default class Sudoku {
-  constructor() {
-    this.start();
+  constructor(test) {
+    this.start(test);
+  }
+
+  start(test) {
+    let array = test ? SOLVED_ARRAY : SUDOKU_ARRAY;
+    this.sudokuArray = fromJS(array);
   }
 
   getIndex(row, column) {
@@ -14,27 +19,56 @@ export default class Sudoku {
     this.sudokuArray = this.sudokuArray.setIn([row, column], value);
   }
 
-  findConflicts() {
-    let checkArray = List([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  /*
+   * Checks for invalid locations of
+   */
+  findConflicts(value, row, column) {
     let conflicts = new List();
+
+    for(let i = 0; i < 9; i++) {
+      if (this.getIndex(row, i) === value && i !== column) {
+        conflicts = conflicts.push({
+          row,
+          column: i
+        });
+      }
+    }
+
+    for(let i = 0; i < 9; i++) {
+      if (this.getIndex(i, column) === value && i !== row) {
+        conflicts = conflicts.push({
+          row: i,
+          column
+        });
+      }
+    }
+
+    let cellRow = row - (row % 3);
+    let cellColumn = column - (column % 3);
+
+    for(let i = cellRow; i < cellRow + 3; i++) {
+      for(let j = cellColumn; j < cellColumn + 3; j++) {
+        if (this.getIndex(i, j) === value && i !== row && j != column) {
+          conflicts = conflicts.push({
+            row: i,
+            column: j
+          });
+        }
+      }
+    }
+
+    return conflicts;
+  }
+
+  isGameOver() {
+    let checkArray = List([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
     let checkLocation = (row, column, list) => {
       let value = this.getIndex(row, column);
       let index = list.indexOf(value);
 
-      if(value === '') {
-        return list;
-      }
-
-      if (list.indexOf(value) < 0) {
-        console.log('value I search for..', value, "should be ", index);
-        console.log(fromJS(list), value);
-        console.log(value, row, column);
-        conflicts = conflicts.push({
-          row,
-          column
-        });
-        return list;
+      if(value === '' || index < 0) {
+        return false;
       };
 
       return list.remove(index);
@@ -46,42 +80,28 @@ export default class Sudoku {
       let checkHorizontal = checkArray;
 
       for(let j = 0; j < 9; j++) {
-        console.log("VERTICAL");
         checkVertical = checkLocation(j, i, checkVertical);
-        console.log("HORIZONTAL");
         checkHorizontal = checkLocation(i, j, checkHorizontal);
+        if(!checkVertical || !checkHorizontal) {
+          return false;
+        }
       }
     }
 
     for(let row = 0; row < 9; row+=3) {
       for (let column = 0; column < 9; column += 3) {
         let checkCell = checkArray;
-        console.log("CELL");
         for(let i = row; i < row + 3; i++) {
           for(let j = column; j < column + 3; j++) {
             checkCell = checkLocation(i, j, checkCell);
+            if(!checkCell) {
+              return false;
+            }
           }
         }
       }
     }
 
-    console.log(fromJS(conflicts));
-    return conflicts;
-  }
-
-  isCompleted() {
-    for(let row = 0; row < 9; row++) {
-      for(let column = 0; column < 9; column++) {
-        if(getIndex(row, column) === '') {
-          return false;
-        }
-      }
-    }
     return true;
   }
-
-  start() {
-    this.sudokuArray = fromJS(SUDOKU_ARRAY);
-  }
-
 }

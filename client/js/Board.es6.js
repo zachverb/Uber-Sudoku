@@ -40,11 +40,11 @@ export default class BoardComponent {
           self.sudoku.setIndex('', row, column);
         } else {
           self.sudoku.setIndex(val, row, column);
-          let conflicts = self.sudoku.findConflicts();
-          if(conflicts.size === 0 && self.sudoku.isCompleted()) {
-            return gameOver();
-          }
-          conflicts.forEach(self.highlightConflict);
+        }
+        let conflicts = self.sudoku.findConflicts(val, row, column);
+        self.highlightConflicts(conflicts);
+        if(conflicts.size === 0 && isGameOver()) {
+          return gameOver();
         }
       });
     }
@@ -53,9 +53,13 @@ export default class BoardComponent {
     return tile;
   }
 
-  highlightConflict({row, column}) {
-    let id = `#${row}-${column}`;
-    $(id).addClass('conflict');
+  highlightConflicts(conflicts) {
+    $('.conflict').removeClass('conflict');
+    conflicts.forEach(({row, column}) => {
+      let id = `#${row}-${column}`;
+      $(id).addClass('conflict');
+    });
+
   }
 
   gameOver() {
