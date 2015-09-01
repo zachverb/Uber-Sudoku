@@ -40,7 +40,7 @@ export default class BoardComponent {
       input.on('input', function() {
         console.log("input");
         let val = parseInt($(this).val());
-        if(isNaN(val) || !self.sudoku.addMove(val, row, column)) {
+        if(isNaN(val) || !self.sudoku.addMove(val, row, column) || val < 1) {
           $(this).val('');
           self.sudoku.setIndex('', row, column);
         } else if(self.sudoku.isGameOver()) {
